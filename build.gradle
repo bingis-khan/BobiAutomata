@@ -11,7 +11,7 @@ plugins {
 }
 
 application {
-	mainClassName = 'com.bingis_khan.bobicell.BobiCell'
+	mainClassName = 'com.bingis_khan.bobicell.BobiAutomata'
 }
 
 repositories {
