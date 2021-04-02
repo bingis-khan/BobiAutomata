@@ -1,5 +1,7 @@
 package com.bingis_khan.bobicell;
 
+import java.awt.Point;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -33,33 +35,32 @@ class Board {
 		this.ruleset = ruleset;
 		
 		this.defaultState = defaultState;
+		
 	}
 	
 	// Initializes an empty board.
 	static Board emptyBoard(int width, int height, Ruleset rs, final State empty) {
 		Board board = new Board(width, height, rs, empty);
-		board.computeNextState((b) -> empty);
+		board.updateEachCell((x, y) -> empty);
 		
 		return board;
 	}
 	
 	// Computes the next state for each tile.
 	void update() {
-		computeNextState(ruleset::nextState);
+		updateEachCell((x, y) -> ruleset.nextState(this, x, y));
 	}
 	
-	// Updates each tile accordingly and swaps the buffer.
-	private void computeNextState(Function<Board, State> f) {
-		forEachCell((b) -> {
-			nextStates[x][y] = f.apply(b);
-		});
+	private void updateEachCell(BiFunction<Integer, Integer, State> update) {
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++)
+				nextStates[x][y] = update.apply(x, y);
 		
 		swap();
 	}
 	
 	// Generic function for iterating over all cells.
-	private int x, y;	// Uses these instance variables.
-	void forEachCell(Consumer<Board> f) {
+	void forEachCell(Consumer<State> f) {
 		// A bit unfinished...
 		// What I mean is that x, y should be instance variables
 		// if we're going to pass the whole Board object.
@@ -71,24 +72,23 @@ class Board {
 		//    current, left, right, up, down, etc. - alongside getState(dx, dy)
 		// 	  and only ONE argument passed.
 		// According to this [i lost it :3] SO post, there IS a difference, 
-		//  but a really small one. 
-		for (x = 0; x < width; x++)
-			for (y = 0; y < height; y++)
-				f.accept(this);
+		//  but a really small one.
+		//	^^^^^^^^^^^^ It's obsolete! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		// I originally chose instance variables. But, it actually caused some weird ass bugs
+		// like weird nextStates when stepping through simulation. I don't know why the bug happened.
+		// But I sure do know now which 'type' of variable I'll use.
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++)
+				f.accept(currentStates[x][y]);
 		
 	}
 	
-	State getState(int dx, int dy) {
-		assert x < width && y < height : "getState called outside of any forEach loop.";
-		
-		int sx = x + dx,
-			sy = y + dy;
-		
+	State getState(int x, int y) {
 		// Check if out of bounds.
-		if (sx < 0 || sy < 0 || sx >= width || sy >= height)
+		if (x < 0 || y < 0 || x >= width || y >= height)
 			return defaultState;
 		
-		return currentStates[sx][sy];
+		return currentStates[x][y];
 	}
 	
 	// Buffer swap.
@@ -100,5 +100,13 @@ class Board {
 		// If we did only 'current = next', it'd be the same array, 
 		// so writing to one would modify the other. REAL BAD.
 		nextStates = t;
+	}
+	
+	int getWidth() {
+		return width;
+	}
+	
+	int getHeight() {
+		return height;
 	}
 }
