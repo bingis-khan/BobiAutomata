@@ -11,13 +11,13 @@ plugins {
 }
 
 application {
-	mainClassName = 'com.bingis_khan.bobicell.BobiAutomata'
+	mainClass = 'com.bingis_khan.bobicell.BobiAutomata'
 }
 
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {

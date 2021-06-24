@@ -7,11 +7,10 @@ import java.awt.image.BufferedImage;
 // so '==' can be used to check for equality.
 public class State {
 	final String name;
-	final BufferedImage image;
+	BufferedImage image;
 	
-	State(String name, BufferedImage image) {
+	State(String name) {
 		this.name = name;
-		this.image = image;
 	}
 	
 	@Override

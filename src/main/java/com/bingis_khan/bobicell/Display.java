@@ -133,8 +133,6 @@ public class Display {
 										  // that's why the order is a bit weird.
 			int xFilled = 0, yFilled = 0;
 			
-			int drawn = 0;
-			
 			@Override
 			public void accept(State s) {
 				xAll += xDif;
@@ -172,8 +170,6 @@ public class Display {
 					xAll = 0;
 				}
 				
-				drawn++;
-				
 				// TODO: This algorithm can sometimes leave bottom pixels empty. Fix that.
 				// Also, somehow rightmost seem ok?
 			}
@@ -206,8 +202,6 @@ public class Display {
 
 			@Override
 			public void keyPressed(KeyEvent e) {}
-
-			int prev = 1;
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
