@@ -23,7 +23,7 @@ public class BobiAutomata {
 	}
 	
 	public static Board makeBoard(int width, int height, Ruleset rs, Map<String, Object> params) {
-		return Board.emptyBoard(width, height, rs, (State)params.get("Default"));
+		return Board.emptyBoard(width, height, rs, (State)params.get("Default"), (State)params.get("Border"));
 	}
 	
 	public static void usage() {
@@ -88,6 +88,8 @@ public class BobiAutomata {
 			unknown.removeAll(defaults.keySet());
 			
 			unknown.forEach((us) -> er.error("Parameters", String.format("Unknown parameter \"%s\".", us)));
+		
+			return;
 		}
 		
 		// If they are, overwrite defaults with user-defined params.

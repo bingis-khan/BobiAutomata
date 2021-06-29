@@ -19,11 +19,11 @@ class Board {
 	private final int width, height;
 	
 	// Default state, when OOB and Board is not toroidal. 
-	private final State defaultState;
+	private final State border;
 	
 	// Constructors will be named static functions
 	// for different initial configurations.
-	private Board(int width, int height, Ruleset ruleset, State defaultState) {
+	private Board(int width, int height, Ruleset ruleset, State border) {
 		currentStates = new State[width][height];
 		nextStates = new State[width][height];
 		
@@ -32,13 +32,12 @@ class Board {
 		
 		this.ruleset = ruleset;
 		
-		this.defaultState = defaultState;
-		
+		this.border = border;
 	}
 	
 	// Initializes an empty board.
-	static Board emptyBoard(int width, int height, Ruleset rs, final State empty) {
-		Board board = new Board(width, height, rs, empty);
+	static Board emptyBoard(int width, int height, Ruleset rs, final State empty, final State border) {
+		Board board = new Board(width, height, rs, border);
 		board.updateEachCell((x, y) -> empty);
 		
 		return board;
@@ -84,7 +83,7 @@ class Board {
 	State getState(int x, int y) {
 		// Check if out of bounds.
 		if (x < 0 || y < 0 || x >= width || y >= height)
-			return defaultState;
+			return border;
 		
 		return currentStates[x][y];
 	}
