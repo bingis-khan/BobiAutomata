@@ -15,7 +15,7 @@ public class BoardTest {
 	@Test
 	@DisplayName("calling emptyBoard() should fill the board with a state.")
 	public void callingEmptyBoardShouldFillTheBoardWithAState() {
-		b = Board.emptyBoard(10, 10, null, s1);
+		b = Board.emptyBoard(10, 10, null, s1, s1);
 		b.forEachCell((s) -> assertEquals(s, s1));
 	}
 	
@@ -27,7 +27,7 @@ public class BoardTest {
 		@DisplayName("should have updated each state.")
 		public void shouldComputeNextState() {
 			rs = new Ruleset(Arrays.asList(s1, s2), Arrays.asList(new Rule(null, s2)), null);
-			b = Board.emptyBoard(10, 10, rs, s1);
+			b = Board.emptyBoard(10, 10, rs, s1, s1);
 			
 			b.update(); // Update step should change all s1 to s2.
 			
@@ -44,7 +44,7 @@ public class BoardTest {
 			
 			rs = new Ruleset(Arrays.asList(s1, s2), Arrays.asList(new Rule(a, s1)), null);
 			
-			b = Board.emptyBoard(10, 10, rs, s1);
+			b = Board.emptyBoard(10, 10, rs, s1, s1);
 			
 			b.update();
 		}

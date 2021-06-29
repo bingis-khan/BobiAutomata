@@ -82,7 +82,7 @@ public class BobiAutomata {
 		var parameters = ruleset.getParameters();
 		var defaults = setupParameters(ruleset);
 		
-		if (!parameters.keySet().containsAll(defaults.keySet())) {
+		if (!defaults.keySet().containsAll(parameters.keySet())) {
 			// If not:
 			var unknown = parameters.keySet();
 			unknown.removeAll(defaults.keySet());
