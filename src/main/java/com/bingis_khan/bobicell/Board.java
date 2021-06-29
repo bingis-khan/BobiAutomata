@@ -89,9 +89,13 @@ class Board {
 		return currentStates[x][y];
 	}
 	
+	void setCurrentState(State s, int x, int y) {
+		currentStates[x][y] = s;
+	}
+	
 	// Buffer swap.
 	private void swap() {
-		State[][] t = currentStates;
+		var t = currentStates;
 		currentStates = nextStates;
 		
 		// We do actually need to swap them, despite only reading one.

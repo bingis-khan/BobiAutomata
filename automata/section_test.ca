@@ -1,0 +1,11 @@
+States
+    OFF
+    
+Rules (Moore)
+    -> OFF
+    
+Defaults
+    Border is OFF
+    
+Graphics
+    black is OFF

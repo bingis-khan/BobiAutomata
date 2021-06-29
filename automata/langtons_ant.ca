@@ -1,0 +1,37 @@
+States
+	WHITE, BLACK, BL, BR, BU, BD, WL, WR, WU, WD
+	
+Rules (VonNeumann)
+	WL, WR, WU, WD -> WHITE
+	BL, BR, BU, BD -> BLACK
+	
+	BLACK: east is BL -> WU
+	BLACK: east is WL -> WU
+	BLACK: south is BU -> WR
+	BLACK: south is WU -> WR
+	BLACK: west is BR -> WD
+	BLACK: west is WR -> WD
+	BLACK: north is BD -> WL
+	BLACK: north is WD -> WL
+	
+	WHITE: east is BL -> BD
+	WHITE: east is WL -> BD
+	WHITE: south is BU -> BL
+	WHITE: south is WU -> BL
+	WHITE: west is BR -> BU
+	WHITE: west is WR -> BU
+	WHITE: north is BD -> BR
+	WHITE: north is WD -> BR
+	
+Graphics
+	white is WHITE
+	black is BLACK
+	
+	red is BU
+	red is WU
+	red is BD
+	red is WD
+	red is BL
+	red is WL
+	red is BR
+	red is WR

@@ -1,0 +1,16 @@
+States
+    OFF, ON
+    
+Rules (Moore)
+    sum of ON is 3 -> ON
+    ON: sum of ON is 2 -> ON
+    
+    -> OFF
+
+Defaults
+    Border is OFF
+	Default is OFF
+    
+Graphics
+    white is ON
+    black is OFF

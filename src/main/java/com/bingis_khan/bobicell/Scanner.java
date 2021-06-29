@@ -2,9 +2,7 @@ package com.bingis_khan.bobicell;
 
 import static com.bingis_khan.bobicell.TokenType.*;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -182,7 +180,7 @@ public class Scanner {
 	
 	private Token token(TokenType type, String literal) {
 		return new Token(type, literal, currentLine,
-				current - lineStart, start - lineStart);
+				start - lineStart, current - lineStart);
 	}
 	
 	

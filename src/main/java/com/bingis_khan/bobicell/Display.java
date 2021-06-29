@@ -6,7 +6,11 @@ import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
+import java.util.List;
 import java.util.function.Consumer;
 
 import javax.swing.JFrame;
@@ -26,6 +30,10 @@ public class Display {
 	// Simulation configuration.
 	private final Board board;
 	
+	// Possible states.
+	private final List<State> states;
+	private int currentState = 0;
+	
 	// Exit value.
 	private boolean stop = false;
 	
@@ -38,14 +46,16 @@ public class Display {
 	
 	
 	public Display(final int initialWidth, final int initialHeight, 
-			Board board) {
-		assert hTiles > 0 : "Number of horizontal tiles must be greater than 0.";
-		assert vTiles > 0 : "Number of vertical tiles must be greater than 0.";
-		
+			Board board, List<State> states) {
 		this.board = board;
 		
 		this.hTiles = board.getWidth(); // Number of tiles in each dimension.
 		this.vTiles = board.getHeight();
+		
+		this.states = states;
+		
+		assert hTiles > 0 : "Number of horizontal tiles must be greater than 0.";
+		assert vTiles > 0 : "Number of vertical tiles must be greater than 0.";
 		
 		// Stop flickering while resizing.
 		Toolkit.getDefaultToolkit().setDynamicLayout(false);
@@ -53,6 +63,8 @@ public class Display {
 		// Initialize window.
 		canvas = makeCanvas(initialWidth, initialHeight);
 		frame = makeFrame(canvas, initialWidth, initialHeight, WINDOW_NAME);
+		
+		addInputListeners();
 	}
 	
 	public void run() {
@@ -135,15 +147,7 @@ public class Display {
 			
 			@Override
 			public void accept(State s) {
-				xAll += xDif;
-				
-				assert xAll < 1 : "xAll must be greater than 1.";
-				
-				// round (0.5 + x) = 1 for x > 0. So, after the subtraction later,
-				// all = -0.5 + x (where x > 0)
-				assert xAll > -0.5 : "xAll must be greater or equal to -0.5.";
-				assert yAll < 1 : "yAll must be greater than 1.";
-				assert yAll > -0.5 : "yAll must be greater or equal to -0.5.";
+				yAll += yDif;
 				
 				// Decide whether to add the extra part.
 				final int xExtra = (int)Math.round(xAll),
@@ -153,21 +157,21 @@ public class Display {
 				g.drawImage(s.image, xFilled, yFilled, ftWidth + xExtra, ftHeight + yExtra, null);
 				
 				// Update the amount of filled screen.
-				xFilled += ftWidth + xExtra;
+				yFilled += ftHeight + yExtra;
 				
 				// And update accumulated "accumulated diffs".
-				xAll -= xExtra;
+				yAll -= yExtra;
 				
 				// Check if end of screen, then reset horizontal and 'increment' vertical.
-				if (xFilled > screenWidth - ftWidth) {
-					yFilled += ftHeight + yExtra;
-					yAll -= yExtra;
+				if (yFilled > screenHeight - ftHeight) {
+					xFilled += ftWidth + xExtra;
+					xAll -= xExtra;
 					
 					// See yAll declaration.
-					yAll += yDif;
+					xAll += xDif;
 					
-					xFilled = 0;
-					xAll = 0;
+					yFilled = 0;
+					yAll = 0;
 				}
 				
 				// TODO: This algorithm can sometimes leave bottom pixels empty. Fix that.
@@ -175,6 +179,19 @@ public class Display {
 			}
 			
 		});
+		
+		/*
+		 *  This forEach was a bad idea.
+		 *  Why? Because the way we draw cells is dependent on position
+		 *  and thus we rely on the fact that cells are iterated over in 'for each x, y' fashion.
+		 *  This is bad. It should be telling that using outside variables to "track"
+		 *  the drawing progress means it's bad.
+		 *  
+		 *  But still, are naked 'for's really better? We don't actually use any indexes,
+		 *  so two more variables to keep track of.
+		 *  Maybe a better name, like "forEachX_Y" or something like that would be better?
+		 *  It communicates the order in which these cells are visited.
+		 */
 	}
 	
 	private static Canvas makeCanvas(int width, int height) {
@@ -194,31 +211,86 @@ public class Display {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
-		// Quick key listener for basing control.
-		frame.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyTyped(KeyEvent e) {}
-
-			@Override
-			public void keyPressed(KeyEvent e) {}
-			
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (e.getKeyChar() == ' ')
-					paused = !paused;
-				
-				if (e.getKeyChar() == 's')
-					synchronized(board) {
-						board.update();
-					}
-				
-			}
-			
-		});
-		
 		frame.add(c);
 		frame.pack();
 		return frame;
+	}
+	
+	private void addInputListeners() {
+		// Quick key listener for basing control.
+				frame.addKeyListener(new KeyListener() {
+
+					@Override
+					public void keyTyped(KeyEvent e) {}
+
+					@Override
+					public void keyPressed(KeyEvent e) {}
+					
+					@Override
+					public void keyReleased(KeyEvent e) {
+						if (e.getKeyChar() == ' ')
+							paused = !paused;
+						
+						if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+							currentState = (currentState + 1) % states.size();
+						else if (e.getKeyCode() == KeyEvent.VK_LEFT)
+							currentState = (states.size() + currentState - 1) % states.size();
+						
+						if (e.getKeyChar() == 's' && paused)
+							synchronized(board) {
+								board.update();
+							}
+						
+					}
+					
+				});
+				
+				canvas.addMouseListener(new MouseListener() {
+
+					@Override
+					public void mouseClicked(MouseEvent e) {}
+
+					@Override
+					public void mousePressed(MouseEvent e) {
+						setState(e.getX(), e.getY());
+					}
+
+					@Override
+					public void mouseReleased(MouseEvent e) {}
+
+					@Override
+					public void mouseEntered(MouseEvent e) {}
+
+					@Override
+					public void mouseExited(MouseEvent e) {}
+					
+				});
+				
+				canvas.addMouseMotionListener(new MouseMotionListener() {
+					
+					@Override
+					public void mouseDragged(MouseEvent e) {
+						setState(e.getX(), e.getY());
+					}
+
+					@Override
+					public void mouseMoved(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				});
+	}
+	
+	private void setState(int mx, int my) {
+		int x = (int)Math.floor(mx * hTiles / (double) canvas.getWidth());
+		int y = (int)Math.floor(my * vTiles / (double) canvas.getHeight());
+		
+		if (x < 0) x = 0;
+		if (x >= hTiles) x = hTiles - 1;
+		if (y < 0) y = 0;
+		if (y >= vTiles) y = vTiles - 1;
+		
+		board.setCurrentState(states.get(currentState), x, y);
 	}
 }

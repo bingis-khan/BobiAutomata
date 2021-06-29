@@ -1,0 +1,18 @@
+States
+    OFF, DYING, ON
+    
+Rules (Moore)
+    ON -> DYING  -- Colon optional with simple state transitions.
+    DYING -> OFF
+    sum of ON is 2 -> ON
+	
+	otherwise -> OFF
+    
+Defaults
+    Border is OFF
+	Default is OFF
+    
+Graphics
+    black is OFF
+    darkblue is DYING
+    blue is ON

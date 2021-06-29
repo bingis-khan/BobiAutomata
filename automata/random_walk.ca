@@ -1,0 +1,39 @@
+States
+	OFF, GOES_DOWN, GOES_UP, GOES_LEFT, GOES_RIGHT, TRAIL
+
+Rules (VonNeumann)
+	OFF: sum of OFF is 4 -> OFF								-- Optimization 1.
+	TRAIL: sum of TRAIL is 4 -> TRAIL						-- Optimization 2.
+	
+	GOES_DOWN, GOES_UP, GOES_LEFT, GOES_RIGHT -> TRAIL		-- Leave trail.
+
+	north is GOES_DOWN and random 1 in 4 chance -> GOES_DOWN
+	north is GOES_DOWN and random 1 in 3 chance -> GOES_UP
+	north is GOES_DOWN and random 1 in 2 chance -> GOES_LEFT
+	north is GOES_DOWN -> GOES_RIGHT
+	
+	south is GOES_UP and random 1 in 4 chance -> GOES_DOWN
+	south is GOES_UP and random 1 in 3 chance -> GOES_UP
+	south is GOES_UP and random 1 in 2 chance -> GOES_LEFT
+	south is GOES_UP -> GOES_RIGHT
+	
+	east is GOES_LEFT and random 1 in 4 chance -> GOES_DOWN
+	east is GOES_LEFT and random 1 in 3 chance -> GOES_UP
+	east is GOES_LEFT and random 1 in 2 chance -> GOES_LEFT
+	east is GOES_LEFT -> GOES_RIGHT
+	
+	west is GOES_RIGHT and random 1 in 4 chance -> GOES_DOWN
+	west is GOES_RIGHT and random 1 in 3 chance -> GOES_UP
+	west is GOES_RIGHT and random 1 in 2 chance -> GOES_LEFT
+	west is GOES_RIGHT -> GOES_RIGHT
+	
+	OFF -> OFF
+	TRAIL -> TRAIL
+	
+Graphics
+	white is OFF
+	black is GOES_DOWN
+	black is GOES_UP
+	black is GOES_LEFT
+	black is GOES_RIGHT
+	darkgreen is TRAIL
