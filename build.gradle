@@ -47,7 +47,7 @@ test {
 
 createExe {
 	mainClassName = 'com.bingis_khan.bobicell.BobiAutomata'
-	outfile = 'bobicell'	// Exact name TBD.
+	outfile = 'bobicell.exe'	// Exact name TBD.
 	bundledJrePath = 'jre'	// (directory name)
 	headerType = 'console'	// Yeah, uhh... It's a Parser + GUI, so it's kind of a hybrid.
 							// Actually, I set it, because it makes std-whatever visible on console.
